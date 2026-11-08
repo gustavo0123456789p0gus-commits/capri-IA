@@ -1,1 +1,1327 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#070d17" />
+  <title>CAPRI IA</title>
+  <style>
+    :root{
+      --bg:#070d17;
+      --bg-2:#0d1726;
+      --sidebar:#0f1a2a;
+      --panel:#121f30;
+      --panel-strong:#182a3f;
+      --panel-soft:#16263d;
+      --blue:#39bfff;
+      --cyan:#75e8ff;
+      --purple:#8b7cff;
+      --green:#42d392;
+      --yellow:#ffc857;
+      --danger:#ff647c;
+      --text:#edf7ff;
+      --muted:#8ea7bf;
+      --border:#244160;
+      --shadow: 0 24px 60px rgba(0,0,0,0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(57,191,255,0.13), transparent 25%),
+        radial-gradient(circle at bottom right, rgba(139,124,255,0.12), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: inherit;
+    }
+
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 2px;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      height: 100vh;
+      width: 100%;
+    }
+
+    .sidebar {
+      background: rgba(15, 26, 42, 0.96);
+      border-right: 1px solid var(--border);
+      padding: 18px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 6px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(57,191,255,0.18), rgba(117,232,255,0.06));
+      border: 1px solid rgba(57,191,255,0.8);
+      color: var(--cyan);
+      font-size: 22px;
+      font-weight: 900;
+      box-shadow: 0 0 24px rgba(57,191,255,0.25);
+    }
+
+    .logo-text {
+      line-height: 1.1;
+    }
+
+    .logo-text strong {
+      display: block;
+      letter-spacing: 3px;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .logo-text small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .nav-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .side-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 12px;
+      border-radius: 12px;
+      color: var(--text);
+      border: 1px solid transparent;
+      background: transparent;
+      text-align: left;
+      transition: 0.2s ease;
+    }
+
+    .side-btn:hover {
+      background: rgba(20, 38, 56, 0.8);
+      border-color: rgba(57,191,255,0.2);
+      transform: translateX(2px);
+    }
+
+    .side-btn.active {
+      background: linear-gradient(180deg, rgba(26,44,63,0.9), rgba(15,28,41,0.9));
+      border-color: rgba(57,191,255,0.5);
+      box-shadow: inset 0 0 0 1px rgba(117,232,255,0.1);
+    }
+
+    .side-btn .left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .icon {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      color: var(--cyan);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .badge {
+      min-width: 24px;
+      height: 24px;
+      padding: 0 7px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(57,191,255,0.12);
+      color: var(--cyan);
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid rgba(57,191,255,0.2);
+    }
+
+    .sidebar-label {
+      margin: 10px 6px 4px;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 2.2px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      background: rgba(16, 26, 38, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 16px rgba(66,211,146,0.8);
+    }
+
+    .main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .topbar {
+      height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 32px 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10, 17, 28, 0.45);
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .title-wrap h1 {
+      margin: 0;
+      font-size: clamp(1.2rem, 2vw, 2rem);
+      letter-spacing: 0.02em;
+    }
+
+    .title-wrap small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ghost-btn, .primary-btn {
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .ghost-btn {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .ghost-btn:hover {
+      background: rgba(255,255,255,0.04);
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      color: #04131d;
+      box-shadow: 0 18px 25px rgba(57,191,255,0.2);
+    }
+
+    .primary-btn:hover {
+      filter: brightness(1.06);
+    }
+
+    .content {
+      flex: 1;
+      overflow: auto;
+      padding: 24px 30px 30px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 22px;
+      margin-bottom: 24px;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(18,31,48,0.95), rgba(13,23,35,0.96));
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .welcome {
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(57,191,255,0.12), transparent 45%);
+      pointer-events: none;
+    }
+
+    .welcome-header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(57,191,255,0.10);
+      border: 1px solid rgba(57,191,255,0.26);
+      color: var(--cyan);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .welcome h2 {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 12px;
+      font-size: clamp(1.6rem, 2.6vw, 2.6rem);
+      letter-spacing: -0.04em;
+    }
+
+    .welcome p {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      max-width: 52ch;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .welcome-actions {
+      position: relative;
+      z-index: 1;
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .mini-panel {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .mini-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .mini-header strong {
+      font-size: 15px;
+    }
+
+    .mini-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .mini-stat:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .mini-stat .label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .mini-stat .value {
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      padding: 18px 18px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+    }
+
+    .stat-card .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .stat-card .num {
+      font-size: clamp(1.6rem, 2vw, 2.2rem);
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .stat-card .trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .dash-grid {
+      display: grid;
+      grid-template-columns: 1.55fr 0.95fr;
+      gap: 22px;
+      margin-bottom: 24px;
+    }
+
+    .chart-panel {
+      padding: 20px 20px 16px;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .panel-head h3 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .panel-head .period {
+      color: var(--muted);
+      font-size: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      padding: 7px 10px;
+      border-radius: 999px;
+    }
+
+    .chart {
+      height: 220px;
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      padding: 16px 8px 8px;
+      border-radius: 16px;
+      background:
+        linear-gradient(to top, rgba(57,191,255,0.06), rgba(57,191,255,0.01)),
+        rgba(255,255,255,0.01);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .bar-group {
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      height: 100%;
+      position: relative;
+    }
+
+    .bar {
+      width: 100%;
+      max-width: 36px;
+      min-height: 12px;
+      border-radius: 12px 12px 0 0;
+      background: linear-gradient(180deg, var(--blue), var(--cyan));
+      box-shadow: 0 18px 26px rgba(57,191,255,0.2);
+    }
+
+    .bar.alt {
+      background: linear-gradient(180deg, var(--purple), var(--blue));
+    }
+
+    .bar-group span {
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .activity {
+      padding: 20px;
+    }
+
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 12px;
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .activity-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .activity-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .activity-icon.blue { background: rgba(57,191,255,0.12); color: var(--blue); }
+    .activity-icon.green { background: rgba(66,211,146,0.12); color: var(--green); }
+    .activity-icon.yellow { background: rgba(255,200,87,0.12); color: var(--yellow); }
+
+    .activity-copy small {
+      color: var(--muted);
+      display: block;
+      margin-top: 2px;
+    }
+
+    .activity-time {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+    }
+
+    .assistant-panel {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .assistant-box {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .assistant-box h4 {
+      margin: 0 0 10px;
+      font-size: 0.96rem;
+    }
+
+    .assistant-box p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .prompt {
+      display: flex;
+      gap: 10px;
+      padding: 12px 12px 12px 14px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .prompt input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .prompt input::placeholder {
+      color: var(--muted);
+    }
+
+    .prompt button {
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      color: #04131d;
+      font-weight: 800;
+    }
+
+    .quick-card {
+      padding: 18px;
+    }
+
+    .quick-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .quick-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 12px;
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .quick-item strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .quick-item small {
+      color: var(--muted);
+    }
+
+    @media (max-width: 1100px) {
+      .hero, .dash-grid, .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        padding-bottom: 10px;
+      }
+
+      body {
+        overflow: auto;
+      }
+
+      .main {
+        height: auto;
+      }
+
+      .topbar {
+        padding-inline: 18px;
+      }
+
+      .content {
+        padding: 20px 18px 30px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-wrap: wrap;
+        height: auto;
+      }
+    }
+
+    /* CAPRI chat + ADM */
+    .chat-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .chat-local-status{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}
+    .chat-local-status i{width:8px;height:8px;border-radius:50%;background:var(--yellow);display:inline-block;box-shadow:0 0 10px currentColor}
+    .chat-local-status.connected i{background:var(--green)}
+    .chat-tools{display:flex;gap:8px;flex-wrap:wrap}
+    .chat-tools .ghost-btn{padding:8px 11px;font-size:12px}
+    .chat-messages{height:290px;overflow:auto;display:flex;flex-direction:column;gap:12px;padding:14px;background:rgba(3,10,19,.35);border:1px solid var(--border);border-radius:14px}
+    .chat-message{max-width:88%;padding:11px 13px;border-radius:13px;line-height:1.55;overflow-wrap:anywhere}
+    .chat-message p{margin:5px 0 0;white-space:pre-wrap}
+    .chat-message b{font-size:11px;letter-spacing:.06em;color:var(--cyan)}
+    .assistant-message{align-self:flex-start;background:var(--panel-strong);border:1px solid rgba(117,232,255,.12)}
+    .user-message{align-self:flex-end;background:rgba(57,191,255,.14);border:1px solid rgba(57,191,255,.25)}
+    .user-message b{color:var(--blue)}
+    .chat-footnote{font-size:11px;color:var(--muted)}
+    .chat-footnote code{color:var(--cyan);background:rgba(117,232,255,.08);padding:2px 5px;border-radius:5px}
+    .prompt input{min-width:0;outline:none}
+    .prompt button:disabled{opacity:.55;cursor:wait}
+    .adm-overlay{position:fixed;inset:0;background:rgba(0,5,12,.82);backdrop-filter:blur(9px);display:none;align-items:center;justify-content:center;padding:18px;z-index:9999}
+    .adm-overlay.open{display:flex}
+    .adm-card{width:min(540px,100%);max-height:90vh;overflow:auto;background:#101b2a;border:1px solid rgba(117,232,255,.25);border-radius:20px;padding:22px;box-shadow:0 25px 90px rgba(0,0,0,.55)}
+    .adm-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+    .adm-head h2{margin:0 0 6px;font-size:20px;color:var(--text)}
+    .adm-head p,.adm-help{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+    .adm-close{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 11px;cursor:pointer}
+    .adm-field{display:grid;gap:7px;margin:14px 0}
+    .adm-field label{font-size:13px;font-weight:700;color:var(--text)}
+    .adm-field input,.adm-field textarea,.adm-field select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);background:#091321;color:var(--text);outline:none}
+    .adm-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+    .adm-warning{margin-top:14px;padding:12px;border:1px solid rgba(255,200,87,.25);background:rgba(255,200,87,.07);border-radius:11px;color:#f5d58a;font-size:12px;line-height:1.6}
+    .adm-msg{min-height:18px;color:var(--cyan);font-size:12px;margin-top:10px}
+    .history-list{display:grid;gap:8px;margin-top:12px}
+    .history-entry{padding:10px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.025);font-size:12px;color:var(--muted)}
+    .history-entry strong{display:block;color:var(--text);margin-bottom:4px}
+    @media(max-width:600px){.chat-messages{height:250px}.chat-message{max-width:96%}.adm-card{padding:17px}}
+
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">C</div>
+        <div class="logo-text">
+          <strong>CAPRI</strong>
+          <small>IA SYSTEM</small>
+        </div>
+      </div>
+
+      <nav class="nav-group">
+        <button class="side-btn active">
+          <span class="left">
+            <span class="icon">◫</span>
+            <span>Dashboard</span>
+          </span>
+          <span class="badge">3</span>
+        </button>
+
+        <button class="side-btn">
+          <span class="left">
+            <span class="icon">✦</span>
+            <span>Fluxos</span>
+          </span>
+        </button>
+
+        <button class="side-btn">
+          <span class="left">
+            <span class="icon">◌</span>
+            <span>Agentes</span>
+          </span>
+        </button>
+
+        <button class="side-btn">
+          <span class="left">
+            <span class="icon">◎</span>
+            <span>Relatórios</span>
+          </span>
+        </button>
+
+        <button class="side-btn">
+          <span class="left">
+            <span class="icon">⚑</span>
+            <span>Configuração</span>
+          </span>
+        </button>
+      </nav>
+
+      <div class="sidebar-label">Operações</div>
+
+      <nav class="nav-group">
+        <button class="side-btn">
+          <span class="left">
+            <span class="icon">⎈</span>
+            <span>Deploy</span>
+          </span>
+        </button>
+
+        <button class="side-btn">
+          <span class="left">
+            <span class="icon">☰</span>
+            <span>Análises</span>
+          </span>
+        </button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="status">
+          <span>Sistema online</span>
+          <span class="status-dot"></span>
+        </div>
+        <div class="status">
+          <span>Latência</span>
+          <strong>32ms</strong>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="title-wrap">
+            <h1>Dashboard CAPRI IA</h1>
+            <small>Visão geral do ambiente operacional</small>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="ghost-btn">Exportar</button>
+          <button class="primary-btn">Nova ação</button>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="hero">
+          <div class="panel welcome">
+            <div class="welcome-header">
+              <span class="chip">Interface ativa · métricas demonstrativas</span>
+            </div>
+
+            <h2>Inteligência operacional em tempo real</h2>
+            <p>
+              O CAPRI IA centraliza a análise de fluxo, automações e respostas de negócio em um painel
+              com visão clara de risco, desempenho e produtividade.
+            </p>
+
+            <div class="welcome-actions">
+              <button class="primary-btn">Abrir rotina</button>
+              <button class="ghost-btn">Ver histórico</button>
+            </div>
+          </div>
+
+          <div class="panel mini-panel">
+            <div class="mini-header">
+              <strong>Resumo executivo</strong>
+              <span class="chip">Live</span>
+            </div>
+
+            <div class="mini-stat">
+              <span class="label">Ações concluídas</span>
+              <span class="value">1.284</span>
+            </div>
+
+            <div class="mini-stat">
+              <span class="label">Taxa de sucesso</span>
+              <span class="value">97.4%</span>
+            </div>
+
+            <div class="mini-stat">
+              <span class="label">Tempo médio</span>
+              <span class="value">2.8m</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="stats">
+          <div class="panel stat-card">
+            <div class="top">
+              <span>Vendas</span>
+              <span>↗</span>
+            </div>
+            <div class="num">R$ 84.2k</div>
+            <div class="trend">▲ 14.8% este mês</div>
+          </div>
+
+          <div class="panel stat-card">
+            <div class="top">
+              <span>Atendimentos</span>
+              <span>↗</span>
+            </div>
+            <div class="num">3.420</div>
+            <div class="trend">▲ 8.4% esta semana</div>
+          </div>
+
+          <div class="panel stat-card">
+            <div class="top">
+              <span>Conversas</span>
+              <span>⇅</span>
+            </div>
+            <div class="num">11.9k</div>
+            <div class="trend">▲ 6.1% hoje</div>
+          </div>
+
+          <div class="panel stat-card">
+            <div class="top">
+              <span>Alertas</span>
+              <span>⚠</span>
+            </div>
+            <div class="num">12</div>
+            <div class="trend" style="color: var(--danger);">▼ 3 críticos</div>
+          </div>
+        </section>
+
+        <section class="dash-grid">
+          <div class="panel chart-panel">
+            <div class="panel-head">
+              <span class="period">Últimos 7 dias</span>
+              <h3>Performance de operação</h3>
+            </div>
+
+            <div class="chart">
+              <div class="bar-group"><div class="bar" style="height: 36%;"></div><span>Seg</span></div>
+              <div class="bar-group"><div class="bar" style="height: 48%;"></div><span>Ter</span></div>
+              <div class="bar-group"><div class="bar alt" style="height: 62%;"></div><span>Qua</span></div>
+              <div class="bar-group"><div class="bar" style="height: 56%;"></div><span>Qui</span></div>
+              <div class="bar-group"><div class="bar alt" style="height: 82%;"></div><span>Sex</span></div>
+              <div class="bar-group"><div class="bar" style="height: 71%;"></div><span>Sáb</span></div>
+              <div class="bar-group"><div class="bar alt" style="height: 92%;"></div><span>Dom</span></div>
+            </div>
+          </div>
+
+          <div class="panel activity">
+            <div class="panel-head">
+              <h3>Atividade recente</h3>
+            </div>
+
+            <div class="activity-list">
+              <div class="activity-item">
+                <div class="activity-left">
+                  <div class="activity-icon blue">AI</div>
+                  <div class="activity-copy">
+                    <strong>Resposta automatizada</strong>
+                    <small>Cliente: João Silva</small>
+                  </div>
+                </div>
+                <div class="activity-time">2 min</div>
+              </div>
+
+              <div class="activity-item">
+                <div class="activity-left">
+                  <div class="activity-icon green">✓</div>
+                  <div class="activity-copy">
+                    <strong>Fluxo finalizado</strong>
+                    <small>Campanha ativa</small>
+                  </div>
+                </div>
+                <div class="activity-time">18 min</div>
+              </div>
+
+              <div class="activity-item">
+                <div class="activity-left">
+                  <div class="activity-icon yellow">!</div>
+                  <div class="activity-copy">
+                    <strong>Alerta de revisão</strong>
+                    <small>Agendamento pendente</small>
+                  </div>
+                </div>
+                <div class="activity-time">54 min</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="bottom-grid">
+          <div class="panel assistant-panel">
+            <div class="panel-head">
+              <h3>Assistente CAPRI</h3>
+            </div>
+
+            <div class="assistant-box">
+              <h4>CAPRI está pronta para conversar</h4>
+              <p id="capriStatus">Configure a conexão em /ADM para ativar as respostas com IA. Suas conversas ficam salvas neste navegador.</p>
+            </div>
+
+            <div class="chat-toolbar">
+              <span class="chat-local-status"><i></i><span id="connectionLabel">Aguardando configuração</span></span>
+              <div class="chat-tools">
+                <button type="button" class="ghost-btn" id="newChatBtn">Nova conversa</button>
+                <button type="button" class="ghost-btn" id="historyBtn">Histórico</button>
+              </div>
+            </div>
+            <div class="chat-messages" id="chatMessages" aria-live="polite">
+              <div class="chat-message assistant-message"><b>CAPRI</b><p>Oi! Sou a CAPRI. Digite uma mensagem para começar. Para abrir as configurações administrativas, escreva <strong>/ADM</strong>.</p></div>
+            </div>
+            <form class="prompt" id="chatForm">
+              <input id="chatInput" type="text" autocomplete="off" placeholder="Converse com a CAPRI..." aria-label="Mensagem para CAPRI" />
+              <button type="submit" id="sendBtn">Enviar</button>
+            </form>
+            <div class="chat-footnote">Comandos: <code>/ADM</code> · <code>/LIMPAR</code> · <code>/EXPORTAR</code></div>
+          </div>
+
+          <div class="panel quick-card">
+            <div class="panel-head">
+              <h3>Ações rápidas</h3>
+            </div>
+
+            <div class="quick-list">
+              <div class="quick-item">
+                <div>
+                  <strong>Fluxo de onboarding</strong>
+                  <small>3 etapas pendentes</small>
+                </div>
+                <span>→</span>
+              </div>
+
+              <div class="quick-item">
+                <div>
+                  <strong>Relatório semanal</strong>
+                  <small>Atualização automática</small>
+                </div>
+                <span>→</span>
+              </div>
+
+              <div class="quick-item">
+                <div>
+                  <strong>Ativação de IA</strong>
+                  <small>Pronta para envio</small>
+                </div>
+                <span>→</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+
+  <div class="adm-overlay" id="admOverlay" role="dialog" aria-modal="true" aria-labelledby="admTitle">
+    <section class="adm-card">
+      <div class="adm-head">
+        <div><h2 id="admTitle">⌘ CENTRAL ADM — CAPRI</h2><p>Configurações desta instalação</p></div>
+        <button class="adm-close" type="button" id="admClose" aria-label="Fechar">✕</button>
+      </div>
+      <div id="admLoginArea">
+        <p class="adm-help" id="admLoginDescription">Digite a senha administrativa para abrir as configurações.</p>
+        <div class="adm-field"><label for="admPassword">Senha ADM</label><input id="admPassword" type="password" autocomplete="current-password" placeholder="Senha administrativa"></div>
+        <div class="adm-actions"><button class="primary-btn" type="button" id="admLoginBtn">Entrar</button></div>
+      </div>
+      <div id="admSettingsArea" hidden>
+        <div class="adm-field"><label for="groqKey">Chave da API Groq</label><input id="groqKey" type="password" autocomplete="off" placeholder="Cole sua chave Groq aqui"></div>
+        <div class="adm-field"><label for="groqModel">Modelo</label>
+          <select id="groqModel">
+            <option value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile</option>
+            <option value="llama-3.1-8b-instant">Llama 3.1 8B Instant</option>
+          </select>
+        </div>
+        <div class="adm-field"><label for="capriPersonality">Personalidade da CAPRI</label><textarea id="capriPersonality" rows="3">Você é CAPRI, uma assistente virtual inteligente, confiante, expressiva, espirituosa e direta. Fale em português brasileiro natural. Adapte o tom ao jeito de falar do usuário, seja útil e honesta. Nunca invente que executou ações.</textarea></div>
+        <div class="adm-actions">
+          <button class="primary-btn" type="button" id="saveAdmBtn">Salvar nesta aba</button>
+          <button class="ghost-btn" type="button" id="testApiBtn">Testar conexão</button>
+          <button class="ghost-btn" type="button" id="clearKeyBtn">Apagar chave</button>
+        </div>
+        <p class="adm-help" style="margin-top:12px">A chave fica somente na sessão atual do navegador e é apagada quando a aba/sessão termina. Não é gravada no HTML nem no GitHub.</p>
+      </div>
+      <div class="adm-warning"><strong>Importante:</strong> esta é uma versão estática do GitHub Pages. Ao chamar a Groq diretamente pelo navegador, a chave pode ser vista por alguém com acesso às ferramentas do navegador ou ao tráfego da sessão. A senha ADM também é apenas uma barreira visual, não uma segurança real. Para proteger a chave de verdade, será necessário um backend.</div>
+      <div class="adm-msg" id="admMessage" role="status"></div>
+    </section>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const chatStoreKey = "capri_chat_history_v1";
+    const adminHashKey = "capri_admin_hash_v1";
+    const keyStore = "capri_groq_key_session";
+    const modelStore = "capri_groq_model_session";
+    const personalityStore = "capri_personality_session";
+    let messages = [];
+    let adminUnlocked = false;
+    let busy = false;
+
+    function safeRead(key, fallback) {
+      try { const value = JSON.parse(localStorage.getItem(key)); return value ?? fallback; }
+      catch { return fallback; }
+    }
+    function saveHistory() {
+      try { localStorage.setItem(chatStoreKey, JSON.stringify(messages.slice(-80))); }
+      catch { setStatus("Armazenamento local indisponível."); }
+    }
+    function setStatus(text, connected = false) {
+      $("connectionLabel").textContent = text;
+      $("capriStatus").textContent = text;
+      $("connectionLabel").parentElement.classList.toggle("connected", connected);
+    }
+    function renderMessages() {
+      const area = $("chatMessages");
+      area.innerHTML = "";
+      if (!messages.length) {
+        const welcome = document.createElement("div");
+        welcome.className = "chat-message assistant-message";
+        const name = document.createElement("b"); name.textContent = "CAPRI";
+        const p = document.createElement("p"); p.textContent = "Conversa limpa. Pode mandar sua mensagem!";
+        welcome.append(name, p); area.append(welcome);
+      }
+      messages.forEach(item => {
+        const bubble = document.createElement("div");
+        bubble.className = "chat-message " + (item.role === "user" ? "user-message" : "assistant-message");
+        const name = document.createElement("b");
+        name.textContent = item.role === "user" ? "VOCÊ" : "CAPRI";
+        const p = document.createElement("p"); p.textContent = item.content;
+        bubble.append(name, p); area.append(bubble);
+      });
+      area.scrollTop = area.scrollHeight;
+    }
+    function addMessage(role, content) {
+      messages.push({role, content, at: new Date().toISOString()});
+      saveHistory(); renderMessages();
+    }
+    function getApiKey() { return sessionStorage.getItem(keyStore) || ""; }
+    function getModel() { return sessionStorage.getItem(modelStore) || "llama-3.3-70b-versatile"; }
+    function getPersonality() {
+      return sessionStorage.getItem(personalityStore) ||
+        "Você é CAPRI, uma assistente virtual inteligente, confiante, expressiva, espirituosa e direta. Fale em português brasileiro natural. Adapte o tom ao jeito de falar do usuário, seja útil e honesta. Nunca invente que executou ações.";
+    }
+    function updateConnection() {
+      setStatus(getApiKey() ? "Chave Groq configurada nesta sessão" : "Aguardando configuração em /ADM", !!getApiKey());
+    }
+    function openAdm() {
+      $("admOverlay").classList.add("open");
+      $("admMessage").textContent = "";
+      $("admLoginArea").hidden = adminUnlocked;
+      $("admSettingsArea").hidden = !adminUnlocked;
+      $("admLoginDescription").textContent = localStorage.getItem(adminHashKey)
+        ? "Digite a senha administrativa para continuar."
+        : "Primeiro acesso: crie uma senha administrativa para esta instalação.";
+      if (adminUnlocked) {
+        $("groqKey").value = getApiKey();
+        $("groqModel").value = getModel();
+        $("capriPersonality").value = getPersonality();
+      } else {
+        $("admPassword").value = "";
+        $("admPassword").focus();
+      }
+    }
+    function closeAdm() { $("admOverlay").classList.remove("open"); }
+    async function hashPassword(value) {
+      const bytes = new TextEncoder().encode(value);
+      const digest = await crypto.subtle.digest("SHA-256", bytes);
+      return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,"0")).join("");
+    }
+    async function loginAdm() {
+      const pass = $("admPassword").value;
+      if (pass.length < 6) { $("admMessage").textContent = "Use uma senha com pelo menos 6 caracteres."; return; }
+      const existing = localStorage.getItem(adminHashKey);
+      const hash = await hashPassword(pass);
+      if (!existing) {
+        localStorage.setItem(adminHashKey, hash);
+        $("admMessage").textContent = "Senha ADM criada neste navegador.";
+      } else if (existing !== hash) {
+        $("admMessage").textContent = "Senha incorreta.";
+        return;
+      }
+      adminUnlocked = true;
+      $("admLoginArea").hidden = true;
+      $("admSettingsArea").hidden = false;
+      $("groqKey").value = getApiKey();
+      $("groqModel").value = getModel();
+      $("capriPersonality").value = getPersonality();
+    }
+    function saveAdm() {
+      const key = $("groqKey").value.trim();
+      if (key) sessionStorage.setItem(keyStore, key);
+      else sessionStorage.removeItem(keyStore);
+      sessionStorage.setItem(modelStore, $("groqModel").value);
+      sessionStorage.setItem(personalityStore, $("capriPersonality").value.trim());
+      updateConnection();
+      $("admMessage").textContent = "Configurações salvas nesta sessão do navegador.";
+    }
+    async function testApi() {
+      saveAdm();
+      const key = getApiKey();
+      if (!key) { $("admMessage").textContent = "Cole uma chave Groq antes de testar."; return; }
+      $("testApiBtn").disabled = true;
+      $("admMessage").textContent = "Testando conexão...";
+      try {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {"Content-Type":"application/json","Authorization":"Bearer "+key},
+          body: JSON.stringify({model:getModel(),messages:[{role:"user",content:"Responda somente: conexão OK"}],max_tokens:20})
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data?.error?.message || ("HTTP "+response.status));
+        $("admMessage").textContent = "Conexão funcionando! CAPRI recebeu: " + (data.choices?.[0]?.message?.content || "resposta recebida");
+      } catch (error) {
+        $("admMessage").textContent = "Falha no teste: " + error.message;
+      } finally { $("testApiBtn").disabled = false; }
+    }
+    async function sendMessage(text) {
+      if (busy || !text.trim()) return;
+      const raw = text.trim();
+      if (raw.toLowerCase() === "/adm") { addMessage("user", raw); openAdm(); return; }
+      if (raw.toLowerCase() === "/limpar") { messages = []; saveHistory(); renderMessages(); return; }
+      if (raw.toLowerCase() === "/exportar") { exportHistory(); return; }
+      addMessage("user", raw);
+      const key = getApiKey();
+      if (!key) {
+        addMessage("assistant", "Ainda não estou conectada à IA. Digite /ADM, entre na área administrativa e configure sua chave Groq para ativar minhas respostas.");
+        return;
+      }
+      busy = true; $("sendBtn").disabled = true; $("sendBtn").textContent = "…";
+      const pending = document.createElement("div");
+      pending.className = "chat-message assistant-message"; pending.id = "capriPending";
+      const pendingName = document.createElement("b"); pendingName.textContent = "CAPRI";
+      const pendingText = document.createElement("p"); pendingText.textContent = "Estou pensando...";
+      pending.append(pendingName,pendingText); $("chatMessages").append(pending);
+      $("chatMessages").scrollTop = $("chatMessages").scrollHeight;
+      try {
+        const context = messages.slice(-18).map(m => ({role:m.role,content:m.content}));
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method:"POST",
+          headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},
+          body:JSON.stringify({
+            model:getModel(),
+            messages:[{role:"system",content:getPersonality()},...context],
+            temperature:0.75,
+            max_tokens:900
+          })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data?.error?.message || ("HTTP "+response.status));
+        const answer = data.choices?.[0]?.message?.content?.trim();
+        if (!answer) throw new Error("A API não retornou uma resposta.");
+        $("capriPending")?.remove();
+        addMessage("assistant",answer);
+      } catch(error) {
+        $("capriPending")?.remove();
+        addMessage("assistant","Não consegui obter uma resposta da Groq: "+error.message);
+      } finally {
+        busy = false; $("sendBtn").disabled = false; $("sendBtn").textContent = "Enviar";
+        $("chatInput").focus();
+      }
+    }
+    function exportHistory() {
+      const blob = new Blob([JSON.stringify({project:"CAPRI IA",exportedAt:new Date().toISOString(),messages},null,2)],{type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a"); a.href=url; a.download="capri-historico.json"; a.click();
+      URL.revokeObjectURL(url);
+    }
+    function showHistory() {
+      const history = safeRead(chatStoreKey, []);
+      const summary = history.length ? history.slice(-12).map(m => (m.role==="user"?"Você: ":"CAPRI: ")+m.content.slice(0,150)).join("\n\n") : "Nenhuma mensagem salva ainda.";
+      alert("HISTÓRICO RECENTE\n\n"+summary);
+    }
+
+    $("chatForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const value = $("chatInput").value;
+      $("chatInput").value = "";
+      sendMessage(value);
+    });
+    $("admClose").addEventListener("click",closeAdm);
+    $("admOverlay").addEventListener("click",event=>{if(event.target===$("admOverlay"))closeAdm();});
+    $("admLoginBtn").addEventListener("click",loginAdm);
+    $("admPassword").addEventListener("keydown",event=>{if(event.key==="Enter")loginAdm();});
+    $("saveAdmBtn").addEventListener("click",saveAdm);
+    $("testApiBtn").addEventListener("click",testApi);
+    $("clearKeyBtn").addEventListener("click",()=>{$("groqKey").value="";sessionStorage.removeItem(keyStore);updateConnection();$("admMessage").textContent="Chave apagada desta sessão.";});
+    $("newChatBtn").addEventListener("click",()=>{messages=[];saveHistory();renderMessages();});
+    $("historyBtn").addEventListener("click",showHistory);
+
+    document.querySelectorAll(".side-btn").forEach(button=>{
+      button.addEventListener("click",()=>{
+        document.querySelectorAll(".side-btn").forEach(btn=>btn.classList.remove("active"));
+        button.classList.add("active");
+      });
+    });
+    document.querySelectorAll(".topbar-actions .ghost-btn").forEach(button=>button.addEventListener("click",exportHistory));
+    document.querySelectorAll(".topbar-actions .primary-btn").forEach(button=>button.addEventListener("click",()=>{$("chatInput").focus();$("chatInput").scrollIntoView({behavior:"smooth",block:"center"});}));
+    document.querySelectorAll(".welcome-actions .primary-btn").forEach(button=>button.addEventListener("click",()=>{$("chatInput").focus();$("chatInput").scrollIntoView({behavior:"smooth",block:"center"});}));
+    document.querySelectorAll(".welcome-actions .ghost-btn").forEach(button=>button.addEventListener("click",showHistory));
+
+    messages = safeRead(chatStoreKey, []);
+    renderMessages();
+    updateConnection();
+  </script>
+</body>
+</html>
